@@ -1,4 +1,4 @@
-var currentEntry = [1,2,3,4,5,6,7,8,9];
+var currentEntry = [0.3];
 
 const deleteButton = document.querySelector("button#delete");
 const clearEntryButton = document.querySelector("button#clearEntry");
