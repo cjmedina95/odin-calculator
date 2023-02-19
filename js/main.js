@@ -77,8 +77,11 @@ document.addEventListener('keydown', (e) => {
         case 'Backspace':
             backspace();
             break;
+        case '.':
+            setDecimal();
+            break;
         default:
-            console.log("wtf");
+            break;
     }
 
     renderText();
