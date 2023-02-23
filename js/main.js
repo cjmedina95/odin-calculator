@@ -43,45 +43,23 @@ function clear() {
     renderText();
 }
 
-function equals() {
-    switch(signPressed) {
-        case "+":
-            currentEntry = (previousEntry + parseFloat(currentEntry)).toString();
-            previousEntry = parseFloat(currentEntry);
-            break;
-        case "/":
-            break;
-        case "-":
-            currentEntry = (previousEntry - parseFloat(currentEntry)).toString();
-            previousEntry = parseFloat(currentEntry);
-            break;
-        case "×":
-            break;
-        case "%":
-            break;
-        default:
-            break;
-    }
-
-    signPressed = "0";
-    renderText();
-}
-
 function calculateNumbers(sign) {
     let entryToNumber = parseFloat(currentEntry);
-    signPressed = sign;
+    
+    if (sign !== "=") {
+        signPressed = sign;
+    }
     newEntryBool = true;
-    console.log(sign);
 
     if (entries.length > 1) {
         entries.shift();
-        entries.push(sign);
+        entries.push(signPressed);
     }
     else {
-        entries.push(sign);
+        entries.push(signPressed);
     }
 
-    if(entries[0] === sign) {
+    if(entries[0] === signPressed) {
         previousEntry = entryToNumber;
         return;
     }
@@ -101,6 +79,9 @@ function calculateNumbers(sign) {
                 case "×":
                     break;
                 case "%":
+                    break;
+                case "=":
+                    signPressed = "0";
                     break;
                 default:
                     break;
@@ -153,7 +134,7 @@ addButton.addEventListener("click", function() { calculateNumbers("+"); });
 subtractButton.addEventListener("click", function() { calculateNumbers("-"); });
 clearEntryButton.addEventListener("click", clearEntry);
 clearButton.addEventListener("click", clear);
-equalsButton.addEventListener("click", equals);
+equalsButton.addEventListener("click", function() { calculateNumbers("="); });
 
 document.addEventListener('keydown', (e) => {
     if (e.repeat) return;
