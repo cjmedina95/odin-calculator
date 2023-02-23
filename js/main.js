@@ -16,6 +16,7 @@ const deleteButton = document.querySelector("button#delete");
 const clearEntryButton = document.querySelector("button#clearEntry");
 const clearButton = document.querySelector("button#clear");
 const addButton = document.querySelector("button#btnAdd");
+const subtractButton = document.querySelector("button#btnSubtract");
 const decimal = document.querySelector("button#btnDot");
 const equalsButton = document.querySelector("button#btnEquals");
 const numBtn = [];
@@ -45,12 +46,14 @@ function clear() {
 function equals() {
     switch(signPressed) {
         case "+":
-            currentEntry = (parseFloat(currentEntry) + previousEntry).toString();
+            currentEntry = (previousEntry + parseFloat(currentEntry)).toString();
             previousEntry = parseFloat(currentEntry);
             break;
         case "/":
             break;
         case "-":
+            currentEntry = (previousEntry - parseFloat(currentEntry)).toString();
+            previousEntry = parseFloat(currentEntry);
             break;
         case "×":
             break;
@@ -64,26 +67,44 @@ function equals() {
     renderText();
 }
 
-function addNumbers() {
+function calculateNumbers(sign) {
     let entryToNumber = parseFloat(currentEntry);
-    signPressed = "+";
+    signPressed = sign;
     newEntryBool = true;
+    console.log(sign);
 
     if (entries.length > 1) {
         entries.shift();
-        entries.push("+");
+        entries.push(sign);
     }
     else {
-        entries.push("+");
+        entries.push(sign);
     }
 
-    if(entries[0] === "+") {
+    if(entries[0] === sign) {
         previousEntry = entryToNumber;
         return;
     }
     else {
         if (previousEntry != 0) {
-            previousEntry += entryToNumber;
+            switch(signPressed) {
+                case "+":
+                    currentEntry = (previousEntry + parseFloat(currentEntry)).toString();
+                    previousEntry = parseFloat(currentEntry);
+                    break;
+                case "/":
+                    break;
+                case "-":
+                    currentEntry = (previousEntry - parseFloat(currentEntry)).toString();
+                    previousEntry = parseFloat(currentEntry);
+                    break;
+                case "×":
+                    break;
+                case "%":
+                    break;
+                default:
+                    break;
+            }
         } else {
             previousEntry = entryToNumber;
         }
@@ -128,7 +149,8 @@ numBtn.forEach((number) => {
 
 decimal.addEventListener("click", setDecimal);
 deleteButton.addEventListener("click", backspace);
-addButton.addEventListener("click", addNumbers);
+addButton.addEventListener("click", function() { calculateNumbers("+"); });
+subtractButton.addEventListener("click", function() { calculateNumbers("-"); });
 clearEntryButton.addEventListener("click", clearEntry);
 clearButton.addEventListener("click", clear);
 equalsButton.addEventListener("click", equals);
