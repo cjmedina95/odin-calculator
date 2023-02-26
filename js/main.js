@@ -1,11 +1,10 @@
 // === DEFINITIONS ===
-// entries[] holds the two most recent inputs to check for repeated operator presses
-// newEntryBool is a flag to reset the input when an operator is pressed
-// currentEntry is the number currently in the text box
-// previousEntry is the number previously in the text box (e.g. before an operator was pressed)
+// 
 // ===================
 // 
 // === SUMMARY ===
+//
+// ===============
 
 var equatedValue = 0;
 var previousSign = "";
@@ -20,8 +19,12 @@ const addButton = document.querySelector("button#btnAdd");
 const subtractButton = document.querySelector("button#btnSubtract");
 const multiplyButton = document.querySelector("button#btnMultiply");
 const divideButton = document.querySelector("button#btnDivide");
+const logButton = document.querySelector("button#btnLog");
+const rootButton = document.querySelector("button#btnRoot");
+const squareButton = document.querySelector("button#btnSquare");
 const decimal = document.querySelector("button#btnDot");
 const equalsButton = document.querySelector("button#btnEquals");
+const signButton = document.querySelector("button#btnSign");
 const numBtn = [];
 const digits = ['1','2','3','4','5','6','7','8','9','0'];
 
@@ -48,6 +51,12 @@ function clear() {
 
 function calculateNumbers(sign) {
 
+    // Prevent repeated sign presses from calculating new values.
+    if (newEntryFlag) {
+        previousSign = sign;
+        return;
+    }
+
     newEntryFlag = true;
 
     // Initialize previousSign only for the first sign press.
@@ -59,19 +68,21 @@ function calculateNumbers(sign) {
 
     switch(previousSign) {
         case "+":
-            console.log (equatedValue + " " + previousSign + " " + parseFloat(currentValue));
             equatedValue += parseFloat(currentValue);
             break;
         case "-":
-            console.log (equatedValue + " " + previousSign + " " + parseFloat(currentValue));
             equatedValue -= parseFloat(currentValue);
             break;
         case "×":
-            console.log (equatedValue + " " + previousSign + " " + parseFloat(currentValue));
             equatedValue *= parseFloat(currentValue);
             break;
         case "÷":
-            console.log (equatedValue + " " + previousSign + " " + parseFloat(currentValue));
+            if (currentValue === "0") {
+                clear();
+                currentValue = "Oops!"
+                renderText();
+                return;
+            }
             equatedValue /= parseFloat(currentValue);
             break;      
         default:
@@ -83,15 +94,42 @@ function calculateNumbers(sign) {
     renderText();
 }
 
+function calculateLog() {
+    currentValue = Math.log10(parseFloat(currentValue)).toString();
+    renderText();
+}
+
+function calculateRoot() {
+    currentValue = Math.sqrt(parseFloat(currentValue)).toString();
+    renderText();
+}
+
+function calculateSquare() {
+    currentValue = Math.pow(parseFloat(currentValue), 2).toString();
+    renderText();
+}
+
 function clearEntry() {
-    currentEntry = "0";
+    currentValue = "0";
     renderText();
 }
 
 function setDecimal() {
-    if (!currentEntry.includes(".")) {
-        currentEntry = currentEntry.concat(".");
+    newEntryFlag = false;
+    if (!currentValue.includes(".")) {
+        currentValue = currentValue.concat(".");
     }
+    renderText();
+}
+
+function signChange() {
+    if (currentValue.includes('-') === false) {
+        currentValue = '-' + currentValue;
+    }
+    else {
+        currentValue = currentValue.substring(1, currentValue.length);
+    }
+
     renderText();
 }
 
@@ -101,28 +139,44 @@ for (let i = 0; i < 10; i++) {
 
 numBtn.forEach((number) => {
     number.addEventListener("click", function(){
-        let input = number.innerText;
-        if (currentValue === "0" || newEntryFlag) {
-            currentValue = input;
-            newEntryFlag = false;
+        if (currentValue.length > 16) {
+            return;
         }
         else {
-            currentValue = currentValue.concat(input);
+            let input = number.innerText;
+
+            if (currentValue === "0" || newEntryFlag) {
+                currentValue = input;
+                newEntryFlag = false;
+            }
+            else {
+                currentValue = currentValue.concat(input);
+            }
+            renderText();
         }
-        renderText();
     });
 });
 
 decimal.addEventListener("click", setDecimal);
 deleteButton.addEventListener("click", backspace);
-percentButton.addEventListener("click", function() { calculateNumbers("%"); });
+percentButton.addEventListener("click", function() {
+    currentValue *= 0.01;
+    renderText();
+});
 addButton.addEventListener("click", function() { calculateNumbers("+"); });
 subtractButton.addEventListener("click", function() { calculateNumbers("-"); });
 multiplyButton.addEventListener("click", function() { calculateNumbers("×"); });
 divideButton.addEventListener("click", function() { calculateNumbers("÷"); });
+logButton.addEventListener("click", calculateLog);
+rootButton.addEventListener("click", calculateRoot);
+squareButton.addEventListener("click", calculateSquare);
 clearEntryButton.addEventListener("click", clearEntry);
 clearButton.addEventListener("click", clear);
-equalsButton.addEventListener("click", function() { calculateNumbers(previousSign); });
+signButton.addEventListener("click", signChange);
+equalsButton.addEventListener("click", function() { 
+    newEntryFlag = false;
+    calculateNumbers(previousSign); 
+});
 
 document.addEventListener('keydown', (e) => {
     if (e.repeat) return;
@@ -140,11 +194,11 @@ document.addEventListener('keydown', (e) => {
         case '7':
         case '8':
         case '9':
-            if (currentEntry === "0") {
-                currentEntry = key;
+            if (currentValue === "0") {
+                currentValue = key;
             }
             else {
-                currentEntry = currentEntry.concat(key);
+                currentValue = currentValue.concat(key);
             }
             break;
         case 'Backspace':
