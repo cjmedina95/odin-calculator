@@ -179,10 +179,10 @@ equalsButton.addEventListener("click", function() {
 });
 
 document.addEventListener('keydown', (e) => {
-    if (e.repeat) return;
-
+    if (e.repeat) {
+        return;
+    }
     const key = e.key;
-    console.log(key);
     switch (key) {
         case '0':
         case '1':
@@ -194,14 +194,23 @@ document.addEventListener('keydown', (e) => {
         case '7':
         case '8':
         case '9':
-            if (currentValue === "0") {
+            if (currentValue.length > 16) {
+                return;
+            }
+
+            if (currentValue === "0" || newEntryFlag) {
                 currentValue = key;
+                newEntryFlag = false;
             }
             else {
                 currentValue = currentValue.concat(key);
             }
+
             break;
         case 'Backspace':
+            if (currentValue.length > 16) {
+                return;
+            }
             backspace();
             break;
         case '.':
