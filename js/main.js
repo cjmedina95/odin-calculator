@@ -1,9 +1,13 @@
 // === DEFINITIONS ===
-// 
+// equatedValue -> Running value of current calculation
+// previousSign -> The last sign pressed (e.g. if "+", then "=", var = "+")
+// currentValue -> The current displayed value on the calculator
+// newEntryFlag -> Set to restart entry on calculator for next input
 // ===================
 // 
 // === SUMMARY ===
-//
+// Takes in input, then calculates a given pair of numbers.
+// Functionality intended to mimic the built-in Windows calculator.
 // ===============
 
 var equatedValue = 0;
@@ -145,6 +149,7 @@ numBtn.forEach((number) => {
         else {
             let input = number.innerText;
 
+            // Reset input when an operator is pressed
             if (currentValue === "0" || newEntryFlag) {
                 currentValue = input;
                 newEntryFlag = false;
